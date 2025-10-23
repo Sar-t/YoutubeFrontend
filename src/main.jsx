@@ -6,10 +6,12 @@ import Navbar from './components/navbar/Navbar.jsx'
 import Signup from './components/Signup/Signup.jsx'
 import Login from './components/Login/Login.jsx'
 import Home from './Pages/Home.jsx'
-import AuthLayout from "./components/Authlayout.jsx"
+import VideoPage from './Pages/VideoPage.jsx'
+import AuthLayout from "./components/AuthLayout.jsx"
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from '../store/store.js'
+import UploadVideo from './components/UploadVideo/UploadVideo.jsx'
 
 const router = createBrowserRouter([
   {
@@ -18,7 +20,9 @@ const router = createBrowserRouter([
     children:[
       {
         path: "/",
-        element: <Home />
+        element: (
+            <Home />
+        )
       },
       {
         path: '/signup',
@@ -35,7 +39,20 @@ const router = createBrowserRouter([
             <Login />
           </AuthLayout>  
         )
-      }
+      },
+      {
+        path: '/video/:videoId',
+        element: <VideoPage/>
+      },
+      {
+        path: '/upload-video',
+        element: (
+          <AuthLayout authentication={true}>
+            <UploadVideo />
+          </AuthLayout>
+        )
+      },
+      
     ]
   }
 ])

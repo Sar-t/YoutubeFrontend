@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-
+import { useDispatch } from 'react-redux';
+import { Navigate, useNavigate } from 'react-router-dom';
+import {login} from "../../store/authSlice.js"
+import { Link } from 'react-router-dom';
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [data, setData] = useState({
     username: '',
     password: ''
@@ -16,8 +21,20 @@ const Login = () => {
         body: JSON.stringify(data)
       });
 
-      const result = await response.json();
-      console.log('Login successful:', result);
+      const result = await response.json(); // ✅ parse body
+      console.log("Login successful:", result);
+      console.log(result.data);
+      console.log(result.data.user);
+      // API returns user at result.data.user.loggedInUser
+      dispatch(login({user: result.data.user.loggedInUser, 
+                      accessToken: result.data.user.accessToken, 
+                      refreshToken: result.data.user.refreshToken}
+                    )
+              );
+        
+      
+
+      navigate("/");
       // Handle success (e.g., store token, redirect)
     } catch (error) {
       console.error('Login failed:', error);
@@ -26,7 +43,7 @@ const Login = () => {
 
   return (
     <div className="form-container">
-      <h2>Sign In</h2>
+      <h1>Sign In</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -44,8 +61,9 @@ const Login = () => {
           onChange={(e) => setData({ ...data, password: e.target.value })}
           required
         />
-        <button type="submit">Sign In</button>
+        <button type="submit" className="submit">Sign In</button>
       </form>
+      <p>Don't have an account?{" "}<Link to="/signup" className="text-blue-700">Sign Up</Link></p>
     </div>
   );
 };

@@ -13,7 +13,8 @@ function Protected({children, authentication = true}) {
     //Authentication tells if the route is protected or not
     useEffect(() => {
         if(authentication && !authStatus){
-          navigate("/login");
+          navigate("/signin") // if the route is protected and user is not logged in, redirect to login page
+          // if the route is protected and user is logged in, allow access;
         }
         // if the route is protected and user is not logged in, redirect to login page
         else if(!authentication && authStatus){

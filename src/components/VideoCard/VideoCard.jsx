@@ -1,8 +1,18 @@
-import React from "react";
-
-const VideoCard = ({ thumbnail, title, channel, views, time }) => {
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+const VideoCard = ({ onClick,_id,thumbnail, title, channel, views, time }) => {
+  const [likes,setLikes] = useState(0);
+  useEffect(()=>{
+    //fetch likes count
+    axios.get(`/api/v1/like/get/likes/${_id}`)
+    .then(res => setLikes(res.data.data.length))
+    .catch(err => console.log("an error occured"));
+  },[_id]);
+  
   return (
-    <div className="w-72 cursor-pointer">
+    <Link to={`/video/${_id}`}>
+    <div className="w-72 cursor-pointer" onClick={onClick}>
       <img
         src={thumbnail}
         alt={title}
@@ -17,10 +27,11 @@ const VideoCard = ({ thumbnail, title, channel, views, time }) => {
         <div>
           <h3 className="text-sm font-semibold">{title}</h3>
           <p className="text-gray-600 text-xs">{channel}</p>
-          <p className="text-gray-500 text-xs">{views} • {time}</p>
+          <p className="text-gray-500 text-xs">{views} views • {likes} likes • {time}</p>
         </div>
       </div>
     </div>
+    </Link>
   );
 };
 

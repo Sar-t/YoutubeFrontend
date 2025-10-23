@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import userService from "../../../services/userService.js";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const Signup = () => {
+  const [loading,setLoading] = useState(false);
+  const navigate = useNavigate();
   const [data, setData] = useState({
     fullname: '',
     email: '',
@@ -13,7 +15,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const formData = new FormData();
     formData.append('fullname', data.fullname);
     formData.append('email', data.email);
@@ -31,6 +33,16 @@ const Signup = () => {
       });
 
       const result = await response.json();
+      setLoading(false);
+      if(result.success){
+        dispatch(login({user: result.data.user.loggedInUser, 
+                        accessToken: result.data.user.accessToken, 
+                        refreshToken: result.data.user.refreshToken
+                        }
+                      )
+        );
+        navigate('/');
+      }
       console.log('Success:', result);
     } catch (error) {
       console.error('Error:', error);
@@ -93,12 +105,11 @@ const Signup = () => {
           accept="image/*"
           onChange={(e) => setData({ ...data, coverImage: e.target.files[0] })}
         /><br />
-
-        <button type="submit" >Register</button>
+        {loading && <button>Registering...</button>}
+        {!loading && <button type="submit" >Register</button>}
         <div className="toggle-link">
-                Already have an account? <Link to = "./signin">Sign in</Link>
-            </div>
-
+          Already have an account? <Link to = "./signin">Sign in</Link>
+        </div>
       </form>
     </div>
   );
